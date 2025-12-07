@@ -1,92 +1,3 @@
-\documentclass[12pt,a4paper]{report}
-
-% ============================================
-% PACKAGES
-% ============================================
-\usepackage[utf8]{inputenc}
-\usepackage[vietnamese]{babel}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{geometry}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{tocloft}
-\usepackage{enumitem}
-\usepackage{amsmath}
-\usepackage{float}
-
-% ============================================
-% PAGE SETUP
-% ============================================
-\geometry{
-    left=3cm,
-    right=2cm,
-    top=2.5cm,
-    bottom=2.5cm
-}
-
-% Header & Footer
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\leftmark}
-\fancyhead[R]{Moji Realtime Chat App}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-
-% Code listing style
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
-}
-\lstset{style=mystyle}
-
-% ============================================
-% DOCUMENT INFO
-% ============================================
-\title{
-    \vspace{2cm}
-    \textbf{\Huge BÁO CÁO PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG}\\[1cm]
-    \textbf{\LARGE Ứng Dụng Chat Thời Gian Thực}\\[0.5cm]
-    \large Moji Realtime Chat Application\\[2cm]
-    \includegraphics[width=0.3\textwidth]{logo.png}\\[2cm] % Thêm logo nếu có
-}
-\author{
-    \textbf{Sinh viên thực hiện:}\\
-    [Họ và tên sinh viên]\\[0.5cm]
-    \textbf{Giảng viên hướng dẫn:}\\
-    [Họ và tên giảng viên]\\[0.5cm]
-    \textbf{Lớp:} [Mã lớp]
-}
-\date{Tháng 12, 2024}
-
-\begin{document}
-
 % ============================================
 % TITLE PAGE
 % ============================================
@@ -94,7 +5,7 @@
     \centering
     \vspace*{1cm}
     
-    \textbf{\Large TRƯỜNG ĐẠI HỌC [TÊN TRƯỜNG]}\\[0.3cm]
+    \textbf{\Large ĐẠI HỌC BÁCH KHOA HÀ NỘI}\\[0.3cm]
     \textbf{\large KHOA CÔNG NGHỆ THÔNG TIN}\\[2cm]
     
     \rule{\textwidth}{1.5pt}\\[0.5cm]
@@ -104,23 +15,24 @@
     
     {\Large \textbf{Đề tài:}}\\[0.3cm]
     {\LARGE \textbf{ỨNG DỤNG CHAT THỜI GIAN THỰC}}\\[0.3cm]
-    {\large Moji Realtime Chat Application}\\[2cm]
+    {\large Realtime Chat Application}\\[2cm]
     
     \begin{minipage}{0.5\textwidth}
         \begin{flushleft}
             \textbf{Sinh viên thực hiện:}\\
-            [Họ và tên]\\
-            MSSV: [Mã số sinh viên]
+            Nguyễn Hữu Mạnh\\
+            MSSV: 20205213
         \end{flushleft}
     \end{minipage}
     \begin{minipage}{0.4\textwidth}
         \begin{flushright}
             \textbf{Giảng viên hướng dẫn:}\\
-            [Họ và tên GV]
+            Nguyễn Thị Thu Hương\\
+            \phantom{abc}
         \end{flushright}
     \end{minipage}\\[3cm]
     
-    {\large \textbf{Tháng 12, 2024}}
+    {\large \textbf{Tháng 12, 2025}}
     
 \end{titlepage}
 
@@ -145,7 +57,7 @@
 
 Trong thời đại công nghệ số hiện nay, nhu cầu giao tiếp và kết nối giữa mọi người ngày càng tăng cao. Các ứng dụng nhắn tin thời gian thực (Realtime Chat) đã trở thành công cụ không thể thiếu trong cuộc sống hàng ngày, từ việc liên lạc cá nhân đến công việc chuyên nghiệp.
 
-Xuất phát từ nhu cầu thực tế đó, dự án \textbf{Moji Realtime Chat Application} được phát triển nhằm xây dựng một ứng dụng chat hiện đại với các tính năng:
+Xuất phát từ nhu cầu thực tế đó, dự án \textbf{Realtime Chat Application} được phát triển nhằm xây dựng một ứng dụng chat hiện đại với các tính năng:
 \begin{itemize}
     \item Nhắn tin trực tiếp giữa hai người dùng
     \item Nhắn tin nhóm
@@ -1051,7 +963,7 @@ POST & /auth/refresh-token & Làm mới token & Cookie \\
 \subsection{POST /auth/signup}
 
 \textbf{Request Body:}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 {
   "username": "string",
   "password": "string",
@@ -1071,7 +983,7 @@ POST & /auth/refresh-token & Làm mới token & Cookie \\
 \subsection{POST /auth/signin}
 
 \textbf{Request Body:}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 {
   "username": "string",
   "password": "string"
@@ -1079,7 +991,7 @@ POST & /auth/refresh-token & Làm mới token & Cookie \\
 \end{lstlisting}
 
 \textbf{Response:}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 {
   "message": "User [displayName] da logged in!",
   "accessToken": "jwt_token_here"
@@ -1149,7 +1061,7 @@ GET & /conversations/:id/messages & Lấy tin nhắn & Có \\
 
 \section{Tổng Kết}
 
-Báo cáo đã trình bày chi tiết việc phân tích và thiết kế hệ thống cho ứng dụng \textbf{Moji Realtime Chat Application}, bao gồm:
+Báo cáo đã trình bày chi tiết việc phân tích và thiết kế hệ thống cho ứng dụng \textbf{Realtime Chat Application}, bao gồm:
 
 \begin{enumerate}
     \item \textbf{Phân tích yêu cầu:} Xác định 15 yêu cầu chức năng và 5 yêu cầu phi chức năng
@@ -1214,7 +1126,7 @@ Trong tương lai, dự án có thể mở rộng thêm các tính năng:
 \section{Cấu Trúc Thư Mục}
 
 \begin{lstlisting}
-Moji_RealtimeChatApp/
+RealtimeChatApp/
 |-- backend/
 |   |-- package.json
 |   |-- src/
@@ -1307,5 +1219,3 @@ PlantUML Documentation,
 \url{https://plantuml.com/}
 
 \end{thebibliography}
-
-\end{document}
