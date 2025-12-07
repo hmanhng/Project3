@@ -1,0 +1,226 @@
+' ============================================
+' 1. AUTHENTICATION (Xác thực)
+' ============================================
+@startuml Authentication
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+title Biểu đồ Sequence - Authentication
+
+actor "User" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+database "MongoDB" as DB
+
+== Đăng Ký (Sign Up) ==
+User -> FE: Nhập thông tin đăng ký
+FE -> BE: POST /api/auth/signup
+BE -> DB: Kiểm tra username tồn tại
+DB --> BE: Kết quả
+alt Username chưa tồn tại
+    BE -> BE: Hash password (bcrypt)
+    BE -> DB: User.create()
+    DB --> BE: User created
+    BE --> FE: 204 No Content
+    FE --> User: Đăng ký thành công
+else Username đã tồn tại
+    BE --> FE: 409 Conflict
+    FE --> User: Lỗi
+end
+
+== Đăng Nhập (Sign In) ==
+User -> FE: Nhập username & password
+FE -> BE: POST /api/auth/signin
+BE -> DB: User.findOne({ username })
+DB --> BE: user
+BE -> BE: bcrypt.compare(password)
+alt Password đúng
+    BE -> BE: Tạo accessToken (JWT)
+    BE -> BE: Tạo refreshToken
+    BE -> DB: Session.create({ refreshToken })
+    DB --> BE: Session created
+    BE --> FE: { accessToken } + Cookie(refreshToken)
+    FE --> User: Đăng nhập thành công
+else Password sai
+    BE --> FE: 401 Unauthorized
+    FE --> User: Sai thông tin
+end
+
+== Refresh Token ==
+FE -> BE: POST /api/auth/refresh-token\n(Cookie: refreshToken)
+BE -> DB: Session.findOne({ refreshToken })
+DB --> BE: session
+alt Session hợp lệ & chưa hết hạn
+    BE -> BE: Tạo accessToken mới
+    BE --> FE: { accessToken }
+else Session không hợp lệ
+    BE --> FE: 403 Forbidden
+end
+
+== Đăng Xuất (Sign Out) ==
+User -> FE: Click đăng xuất
+FE -> BE: POST /api/auth/signout
+BE -> DB: Session.deleteOne({ refreshToken })
+DB --> BE: Deleted
+BE --> FE: 204 No Content
+FE --> User: Đăng xuất thành công
+
+@enduml
+
+' ============================================
+' 2. FRIEND MANAGEMENT (Quản lý bạn bè)
+' ============================================
+@startuml FriendManagement
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+title Biểu đồ Sequence - Friend Management
+
+actor "User" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+database "MongoDB" as DB
+
+== Gửi Lời Mời Kết Bạn ==
+User -> FE: Gửi lời mời đến User B
+FE -> BE: POST /api/friends/request { to }
+BE -> DB: Kiểm tra đã là bạn / có lời mời chưa
+DB --> BE: Kết quả
+alt Chưa là bạn & chưa có lời mời
+    BE -> DB: FriendRequest.create({ from, to })
+    DB --> BE: request
+    BE --> FE: 201 Created
+    FE --> User: Gửi thành công
+else Đã là bạn / Đã có lời mời
+    BE --> FE: 400 Bad Request
+    FE --> User: Lỗi
+end
+
+== Chấp Nhận Lời Mời ==
+User -> FE: Chấp nhận lời mời
+FE -> BE: POST /api/friends/accept/:requestId
+BE -> DB: FriendRequest.findById()
+DB --> BE: request
+alt Request hợp lệ
+    BE -> DB: Friend.create({ userA, userB })
+    BE -> DB: FriendRequest.delete()
+    DB --> BE: Done
+    BE --> FE: 200 OK { newFriend }
+    FE --> User: Đã thêm bạn mới
+else Request không hợp lệ
+    BE --> FE: 404 / 403
+    FE --> User: Lỗi
+end
+
+== Lấy Danh Sách Bạn Bè ==
+User -> FE: Mở trang bạn bè
+FE -> BE: GET /api/friends
+BE -> DB: Friend.find({ userA/userB: userId })
+DB --> BE: friendships
+BE --> FE: { friends }
+FE --> User: Hiển thị danh sách
+
+== Lấy Yêu Cầu Kết Bạn ==
+User -> FE: Mở danh sách yêu cầu
+FE -> BE: GET /api/friends/requests
+BE -> DB: FriendRequest.find({ from/to: userId })
+DB --> BE: requests
+BE --> FE: { sent, received }
+FE --> User: Hiển thị yêu cầu
+
+@enduml
+
+' ============================================
+' 3. MESSAGING (Tin nhắn)
+' ============================================
+@startuml Messaging
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+title Biểu đồ Sequence - Messaging
+
+actor "User" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+database "MongoDB" as DB
+
+== Gửi Tin Nhắn Trực Tiếp ==
+User -> FE: Gửi tin nhắn cho User B
+FE -> BE: POST /api/messages/direct\n{ recipientId, content }
+alt Chưa có conversation
+    BE -> DB: Conversation.create({ type: "direct" })
+    DB --> BE: conversation
+end
+BE -> DB: Message.create({ conversationId, content })
+DB --> BE: message
+BE -> DB: Cập nhật lastMessage
+DB --> BE: Done
+BE --> FE: 201 { message }
+FE --> User: Tin nhắn đã gửi
+
+== Gửi Tin Nhắn Nhóm ==
+User -> FE: Gửi tin nhắn vào nhóm
+FE -> BE: POST /api/messages/group\n{ conversationId, content }
+BE -> DB: Message.create({ conversationId, content })
+DB --> BE: message
+BE -> DB: Cập nhật lastMessage
+DB --> BE: Done
+BE --> FE: 201 { message }
+FE --> User: Tin nhắn đã gửi
+
+@enduml
+
+' ============================================
+' 4. CONVERSATION (Cuộc hội thoại)
+' ============================================
+@startuml Conversation
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+title Biểu đồ Sequence - Conversation
+
+actor "User" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+database "MongoDB" as DB
+
+== Tạo Cuộc Hội Thoại ==
+User -> FE: Tạo hội thoại mới
+FE -> BE: POST /api/conversations\n{ type, name?, memberIds }
+alt type = "direct"
+    BE -> DB: Tìm conversation có sẵn
+    alt Chưa có
+        BE -> DB: Conversation.create()
+    end
+else type = "group"
+    BE -> DB: Conversation.create({ group: { name } })
+end
+DB --> BE: conversation
+BE --> FE: 201 { conversation }
+FE --> User: Hội thoại đã tạo
+
+== Lấy Danh Sách Hội Thoại ==
+User -> FE: Mở trang chat
+FE -> BE: GET /api/conversations
+BE -> DB: Conversation.find({ participants: userId })
+DB --> BE: conversations
+BE --> FE: { conversations }
+FE --> User: Hiển thị danh sách
+
+== Lấy Tin Nhắn (Pagination) ==
+User -> FE: Mở cuộc hội thoại
+FE -> BE: GET /api/conversations/:id/messages\n?limit=50&cursor=...
+BE -> DB: Message.find({ conversationId })\n.sort().limit()
+DB --> BE: messages
+BE --> FE: { messages, nextCursor }
+FE --> User: Hiển thị tin nhắn
+
+@enduml

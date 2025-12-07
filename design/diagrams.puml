@@ -1,0 +1,418 @@
+' ============================================
+' USE CASE DIAGRAM
+' ============================================
+@startuml UseCase
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Use Case Diagram - Realtime Chat App
+
+left to right direction
+
+actor "User" as User
+actor "Guest" as Guest
+
+rectangle "Chat App" {
+    ' Authentication
+    package "Authentication" {
+        usecase "Đăng ký" as UC_SignUp
+        usecase "Đăng nhập" as UC_SignIn
+        usecase "Đăng xuất" as UC_SignOut
+        usecase "Làm mới token" as UC_Refresh
+    }
+    
+    ' Friend Management
+    package "Friend Management" {
+        usecase "Gửi lời mời kết bạn" as UC_SendFR
+        usecase "Chấp nhận lời mời" as UC_AcceptFR
+        usecase "Từ chối lời mời" as UC_DeclineFR
+        usecase "Xem danh sách bạn bè" as UC_GetFriends
+        usecase "Xem lời mời kết bạn" as UC_GetFR
+    }
+    
+    ' Messaging
+    package "Messaging" {
+        usecase "Gửi tin nhắn trực tiếp" as UC_SendDM
+        usecase "Gửi tin nhắn nhóm" as UC_SendGM
+        usecase "Xem tin nhắn" as UC_GetMsg
+    }
+    
+    ' Conversation
+    package "Conversation" {
+        usecase "Tạo cuộc hội thoại" as UC_CreateConv
+        usecase "Xem danh sách hội thoại" as UC_GetConv
+        usecase "Tạo nhóm chat" as UC_CreateGroup
+    }
+    
+    ' User Profile
+    package "User Profile" {
+        usecase "Xem thông tin cá nhân" as UC_Profile
+    }
+}
+
+' Guest connections
+Guest --> UC_SignUp
+Guest --> UC_SignIn
+
+' User connections - Auth
+User --> UC_SignOut
+User --> UC_Refresh
+
+' User connections - Friends
+User --> UC_SendFR
+User --> UC_AcceptFR
+User --> UC_DeclineFR
+User --> UC_GetFriends
+User --> UC_GetFR
+
+' User connections - Messaging
+User --> UC_SendDM
+User --> UC_SendGM
+User --> UC_GetMsg
+
+' User connections - Conversation
+User --> UC_CreateConv
+User --> UC_GetConv
+User --> UC_CreateGroup
+
+' User connections - Profile
+User --> UC_Profile
+
+' Relationships
+UC_SendDM ..> UC_CreateConv : <<include>>
+UC_SendGM ..> UC_GetConv : <<include>>
+UC_AcceptFR ..> UC_GetFR : <<extend>>
+UC_DeclineFR ..> UC_GetFR : <<extend>>
+
+@enduml
+
+' ============================================
+' ACTIVITY DIAGRAM - AUTHENTICATION
+' ============================================
+@startuml Activity_Authentication
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Activity Diagram - Authentication Flow
+
+start
+
+:Mở ứng dụng;
+
+if (Đã đăng nhập?) then (có)
+    :Kiểm tra accessToken;
+    if (Token hợp lệ?) then (có)
+        :Vào trang chính;
+    else (không)
+        :Gọi refresh token;
+        if (Refresh thành công?) then (có)
+            :Cập nhật accessToken;
+            :Vào trang chính;
+        else (không)
+            :Chuyển đến trang đăng nhập;
+        endif
+    endif
+else (không)
+    :Hiển thị trang đăng nhập;
+    
+    switch (Chọn hành động?)
+    case (Đăng nhập)
+        :Nhập username & password;
+        :Gửi request đăng nhập;
+        if (Thông tin đúng?) then (có)
+            :Nhận accessToken & refreshToken;
+            :Lưu tokens;
+            :Vào trang chính;
+        else (không)
+            :Hiển thị lỗi;
+            :Quay lại đăng nhập;
+        endif
+    case (Đăng ký)
+        :Nhập thông tin đăng ký;
+        :Gửi request đăng ký;
+        if (Đăng ký thành công?) then (có)
+            :Chuyển đến đăng nhập;
+        else (không)
+            :Hiển thị lỗi;
+            :Quay lại đăng ký;
+        endif
+    endswitch
+endif
+
+stop
+
+@enduml
+
+' ============================================
+' ACTIVITY DIAGRAM - SEND MESSAGE
+' ============================================
+@startuml Activity_SendMessage
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Activity Diagram - Send Message Flow
+
+start
+
+:Mở cuộc hội thoại;
+
+:Nhập nội dung tin nhắn;
+
+if (Nội dung rỗng?) then (có)
+    :Hiển thị cảnh báo;
+    stop
+else (không)
+endif
+
+:Gửi tin nhắn đến server;
+
+fork
+    :Hiển thị tin nhắn (pending);
+fork again
+    :Server xử lý tin nhắn;
+    :Lưu vào database;
+    :Cập nhật conversation;
+end fork
+
+if (Gửi thành công?) then (có)
+    :Cập nhật trạng thái (sent);
+else (không)
+    :Hiển thị lỗi;
+    :Cho phép gửi lại;
+endif
+
+stop
+
+@enduml
+
+' ============================================
+' ACTIVITY DIAGRAM - FRIEND REQUEST
+' ============================================
+@startuml Activity_FriendRequest
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Activity Diagram - Friend Request Flow
+
+|User A|
+start
+:Tìm kiếm người dùng;
+:Chọn User B;
+:Gửi lời mời kết bạn;
+
+|Server|
+:Nhận yêu cầu;
+if (Đã là bạn bè?) then (có)
+    :Trả về lỗi;
+    |User A|
+    :Hiển thị "Đã là bạn bè";
+    stop
+else (không)
+endif
+
+if (Đã có lời mời?) then (có)
+    :Trả về lỗi;
+    |User A|
+    :Hiển thị "Đã gửi lời mời";
+    stop
+else (không)
+endif
+
+:Tạo FriendRequest;
+:Thông báo User B;
+
+|User B|
+:Nhận thông báo lời mời;
+
+switch (Chọn hành động?)
+case (Chấp nhận)
+    |Server|
+    :Tạo Friend relationship;
+    :Xóa FriendRequest;
+    |User A|
+    :Nhận thông báo được chấp nhận;
+    |User B|
+    :Thêm bạn mới vào danh sách;
+case (Từ chối)
+    |Server|
+    :Xóa FriendRequest;
+    |User B|
+    :Ẩn lời mời;
+endswitch
+
+stop
+
+@enduml
+
+' ============================================
+' CLASS DIAGRAM
+' ============================================
+@startuml ClassDiagram
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam classAttributeIconSize 0
+
+title Class Diagram - Realtime Chat App
+
+' Models
+class User {
+    -_id: ObjectId
+    -username: String
+    -hashedPassword: String
+    -email: String
+    -displayName: String
+    -avatarUrl: String
+    -createdAt: Date
+    -updatedAt: Date
+    --
+    +findOne(query): User
+    +create(data): User
+    +findById(id): User
+}
+
+class Session {
+    -_id: ObjectId
+    -userId: ObjectId
+    -refreshToken: String
+    -expiresAt: Date
+    -createdAt: Date
+    --
+    +create(data): Session
+    +findOne(query): Session
+    +deleteOne(query): void
+}
+
+class Friend {
+    -_id: ObjectId
+    -userA: ObjectId
+    -userB: ObjectId
+    -createdAt: Date
+    --
+    +create(data): Friend
+    +find(query): Friend[]
+    +findOne(query): Friend
+}
+
+class FriendRequest {
+    -_id: ObjectId
+    -from: ObjectId
+    -to: ObjectId
+    -message: String
+    -createdAt: Date
+    --
+    +create(data): FriendRequest
+    +find(query): FriendRequest[]
+    +findById(id): FriendRequest
+    +findByIdAndDelete(id): void
+}
+
+class Conversation {
+    -_id: ObjectId
+    -type: String
+    -participants: Participant[]
+    -group: GroupInfo
+    -lastMessage: MessageRef
+    -lastMessageAt: Date
+    -seenBy: ObjectId[]
+    -unreadCounts: Map
+    -createdAt: Date
+    -updatedAt: Date
+    --
+    +create(data): Conversation
+    +find(query): Conversation[]
+    +findById(id): Conversation
+    +findOne(query): Conversation
+}
+
+class Message {
+    -_id: ObjectId
+    -conversationId: ObjectId
+    -senderId: ObjectId
+    -content: String
+    -createdAt: Date
+    -updatedAt: Date
+    --
+    +create(data): Message
+    +find(query): Message[]
+}
+
+class Participant {
+    -userId: ObjectId
+    -joinedAt: Date
+}
+
+class GroupInfo {
+    -name: String
+    -createdBy: ObjectId
+}
+
+' Controllers
+class AuthController {
+    +signUp(req, res): Response
+    +signIn(req, res): Response
+    +signOut(req, res): Response
+    +refreshToken(req, res): Response
+}
+
+class UserController {
+    +authMe(req, res): Response
+}
+
+class FriendController {
+    +sendFriendRequest(req, res): Response
+    +acceptFriendRequest(req, res): Response
+    +declineFriendRequest(req, res): Response
+    +getAllFriends(req, res): Response
+    +getFriendRequests(req, res): Response
+}
+
+class MessageController {
+    +sendDirectMessage(req, res): Response
+    +sendGroupMessage(req, res): Response
+}
+
+class ConversationController {
+    +createConversation(req, res): Response
+    +getConversations(req, res): Response
+    +getMessages(req, res): Response
+}
+
+' Middleware
+class AuthMiddleware {
+    +protectedRoute(req, res, next): void
+}
+
+' Relationships
+User "1" -- "0..*" Session : has >
+User "1" -- "0..*" Friend : participates >
+User "1" -- "0..*" FriendRequest : sends/receives >
+User "1" -- "0..*" Message : sends >
+User "1" -- "0..*" Conversation : participates >
+
+Conversation "1" *-- "2..*" Participant : contains >
+Conversation "1" *-- "0..1" GroupInfo : has >
+Conversation "1" -- "0..*" Message : contains >
+
+Friend "1" -- "2" User : connects >
+FriendRequest "1" -- "2" User : between >
+
+' Controller - Model relationships
+AuthController ..> User : uses
+AuthController ..> Session : uses
+UserController ..> User : uses
+FriendController ..> Friend : uses
+FriendController ..> FriendRequest : uses
+FriendController ..> User : uses
+MessageController ..> Message : uses
+MessageController ..> Conversation : uses
+ConversationController ..> Conversation : uses
+ConversationController ..> Message : uses
+
+AuthMiddleware ..> User : validates
+
+@enduml

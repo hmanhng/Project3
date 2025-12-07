@@ -1,0 +1,1311 @@
+\documentclass[12pt,a4paper]{report}
+
+% ============================================
+% PACKAGES
+% ============================================
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{float}
+
+% ============================================
+% PAGE SETUP
+% ============================================
+\geometry{
+    left=3cm,
+    right=2cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Header & Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Moji Realtime Chat App}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Code listing style
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ============================================
+% DOCUMENT INFO
+% ============================================
+\title{
+    \vspace{2cm}
+    \textbf{\Huge BÁO CÁO PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG}\\[1cm]
+    \textbf{\LARGE Ứng Dụng Chat Thời Gian Thực}\\[0.5cm]
+    \large Moji Realtime Chat Application\\[2cm]
+    \includegraphics[width=0.3\textwidth]{logo.png}\\[2cm] % Thêm logo nếu có
+}
+\author{
+    \textbf{Sinh viên thực hiện:}\\
+    [Họ và tên sinh viên]\\[0.5cm]
+    \textbf{Giảng viên hướng dẫn:}\\
+    [Họ và tên giảng viên]\\[0.5cm]
+    \textbf{Lớp:} [Mã lớp]
+}
+\date{Tháng 12, 2024}
+
+\begin{document}
+
+% ============================================
+% TITLE PAGE
+% ============================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    \textbf{\Large TRƯỜNG ĐẠI HỌC [TÊN TRƯỜNG]}\\[0.3cm]
+    \textbf{\large KHOA CÔNG NGHỆ THÔNG TIN}\\[2cm]
+    
+    \rule{\textwidth}{1.5pt}\\[0.5cm]
+    {\Huge \textbf{BÁO CÁO}}\\[0.3cm]
+    {\LARGE \textbf{PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG}}\\[0.5cm]
+    \rule{\textwidth}{1.5pt}\\[1.5cm]
+    
+    {\Large \textbf{Đề tài:}}\\[0.3cm]
+    {\LARGE \textbf{ỨNG DỤNG CHAT THỜI GIAN THỰC}}\\[0.3cm]
+    {\large Moji Realtime Chat Application}\\[2cm]
+    
+    \begin{minipage}{0.5\textwidth}
+        \begin{flushleft}
+            \textbf{Sinh viên thực hiện:}\\
+            [Họ và tên]\\
+            MSSV: [Mã số sinh viên]
+        \end{flushleft}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushright}
+            \textbf{Giảng viên hướng dẫn:}\\
+            [Họ và tên GV]
+        \end{flushright}
+    \end{minipage}\\[3cm]
+    
+    {\large \textbf{Tháng 12, 2024}}
+    
+\end{titlepage}
+
+% ============================================
+% TABLE OF CONTENTS
+% ============================================
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+% ============================================
+% CHAPTER 1: GIỚI THIỆU
+% ============================================
+\chapter{GIỚI THIỆU}
+
+\section{Đặt Vấn Đề}
+
+Trong thời đại công nghệ số hiện nay, nhu cầu giao tiếp và kết nối giữa mọi người ngày càng tăng cao. Các ứng dụng nhắn tin thời gian thực (Realtime Chat) đã trở thành công cụ không thể thiếu trong cuộc sống hàng ngày, từ việc liên lạc cá nhân đến công việc chuyên nghiệp.
+
+Xuất phát từ nhu cầu thực tế đó, dự án \textbf{Moji Realtime Chat Application} được phát triển nhằm xây dựng một ứng dụng chat hiện đại với các tính năng:
+\begin{itemize}
+    \item Nhắn tin trực tiếp giữa hai người dùng
+    \item Nhắn tin nhóm
+    \item Quản lý bạn bè
+    \item Xác thực an toàn với JWT
+\end{itemize}
+
+\section{Mục Tiêu Dự Án}
+
+\subsection{Mục tiêu tổng quát}
+Xây dựng một ứng dụng chat thời gian thực hoàn chỉnh với đầy đủ các chức năng cơ bản, đảm bảo tính bảo mật và trải nghiệm người dùng tốt.
+
+\subsection{Mục tiêu cụ thể}
+\begin{enumerate}
+    \item \textbf{Hệ thống xác thực:} Đăng ký, đăng nhập, đăng xuất với cơ chế JWT (Access Token + Refresh Token)
+    \item \textbf{Quản lý bạn bè:} Gửi, chấp nhận, từ chối lời mời kết bạn
+    \item \textbf{Nhắn tin:} Hỗ trợ chat trực tiếp (1-1) và chat nhóm
+    \item \textbf{Quản lý cuộc hội thoại:} Tạo, xem danh sách, xem lịch sử tin nhắn
+\end{enumerate}
+
+\section{Phạm Vi Dự Án}
+
+\subsection{Trong phạm vi}
+\begin{itemize}
+    \item Xác thực người dùng (Authentication)
+    \item Quản lý bạn bè (Friend Management)
+    \item Nhắn tin (Messaging)
+    \item Quản lý cuộc hội thoại (Conversation Management)
+\end{itemize}
+
+\subsection{Ngoài phạm vi}
+\begin{itemize}
+    \item Video call / Voice call
+    \item Chia sẻ file, hình ảnh
+    \item Push notification
+    \item End-to-end encryption
+\end{itemize}
+
+\section{Công Nghệ Sử Dụng}
+
+\begin{table}[H]
+\centering
+\caption{Công nghệ sử dụng trong dự án}
+\label{tab:tech-stack}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Thành phần} & \textbf{Công nghệ} & \textbf{Phiên bản} \\
+\hline
+\multirow{5}{*}{Frontend} & React & 19.1.1 \\
+& TypeScript & 5.9.3 \\
+& Vite & 7.1.7 \\
+& TailwindCSS & 4.1.14 \\
+& Zustand & 5.0.8 \\
+\hline
+\multirow{4}{*}{Backend} & Node.js & - \\
+& Express.js & 5.1.0 \\
+& Mongoose & 8.19.0 \\
+& JWT & 9.0.2 \\
+\hline
+Database & MongoDB & - \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================
+% CHAPTER 2: PHÂN TÍCH YÊU CẦU
+% ============================================
+\chapter{PHÂN TÍCH YÊU CẦU}
+
+\section{Yêu Cầu Chức Năng}
+
+\subsection{Module Authentication (Xác thực)}
+
+\begin{table}[H]
+\centering
+\caption{Yêu cầu chức năng - Authentication}
+\label{tab:req-auth}
+\begin{tabular}{|c|l|p{8cm}|}
+\hline
+\textbf{ID} & \textbf{Tên} & \textbf{Mô tả} \\
+\hline
+FR-01 & Đăng ký & Người dùng mới có thể tạo tài khoản với username, password, email, họ tên \\
+\hline
+FR-02 & Đăng nhập & Người dùng xác thực bằng username và password, nhận về access token \\
+\hline
+FR-03 & Đăng xuất & Người dùng thoát khỏi hệ thống, xóa session \\
+\hline
+FR-04 & Refresh Token & Hệ thống tự động làm mới access token khi hết hạn \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Module Friend Management (Quản lý bạn bè)}
+
+\begin{table}[H]
+\centering
+\caption{Yêu cầu chức năng - Friend Management}
+\label{tab:req-friend}
+\begin{tabular}{|c|l|p{8cm}|}
+\hline
+\textbf{ID} & \textbf{Tên} & \textbf{Mô tả} \\
+\hline
+FR-05 & Gửi lời mời & Người dùng gửi lời mời kết bạn đến người dùng khác \\
+\hline
+FR-06 & Chấp nhận lời mời & Người nhận đồng ý kết bạn \\
+\hline
+FR-07 & Từ chối lời mời & Người nhận không đồng ý kết bạn \\
+\hline
+FR-08 & Xem bạn bè & Hiển thị danh sách tất cả bạn bè \\
+\hline
+FR-09 & Xem lời mời & Hiển thị lời mời đã gửi và nhận \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Module Messaging (Nhắn tin)}
+
+\begin{table}[H]
+\centering
+\caption{Yêu cầu chức năng - Messaging}
+\label{tab:req-message}
+\begin{tabular}{|c|l|p{8cm}|}
+\hline
+\textbf{ID} & \textbf{Tên} & \textbf{Mô tả} \\
+\hline
+FR-10 & Tin nhắn trực tiếp & Gửi tin nhắn 1-1 với người dùng khác \\
+\hline
+FR-11 & Tin nhắn nhóm & Gửi tin nhắn trong group chat \\
+\hline
+FR-12 & Xem tin nhắn & Xem lịch sử tin nhắn với phân trang \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Module Conversation (Cuộc hội thoại)}
+
+\begin{table}[H]
+\centering
+\caption{Yêu cầu chức năng - Conversation}
+\label{tab:req-conv}
+\begin{tabular}{|c|l|p{8cm}|}
+\hline
+\textbf{ID} & \textbf{Tên} & \textbf{Mô tả} \\
+\hline
+FR-13 & Tạo hội thoại & Tạo conversation mới (direct hoặc group) \\
+\hline
+FR-14 & Xem danh sách & Hiển thị tất cả conversations của người dùng \\
+\hline
+FR-15 & Tạo nhóm & Tạo group chat với nhiều thành viên \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Yêu Cầu Phi Chức Năng}
+
+\begin{table}[H]
+\centering
+\caption{Yêu cầu phi chức năng}
+\label{tab:nfr}
+\begin{tabular}{|c|l|p{8cm}|}
+\hline
+\textbf{ID} & \textbf{Loại} & \textbf{Mô tả} \\
+\hline
+NFR-01 & Bảo mật & Password được mã hóa bằng bcrypt (salt = 10) \\
+\hline
+NFR-02 & Bảo mật & Sử dụng JWT với access token (30 phút) và refresh token (14 ngày) \\
+\hline
+NFR-03 & Hiệu năng & API response time < 500ms \\
+\hline
+NFR-04 & Khả dụng & Hệ thống hoạt động 24/7 \\
+\hline
+NFR-05 & Tương thích & Hỗ trợ các trình duyệt hiện đại (Chrome, Firefox, Edge, Safari) \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================
+% CHAPTER 3: BIỂU ĐỒ USE CASE
+% ============================================
+\chapter{BIỂU ĐỒ USE CASE}
+
+\section{Tổng Quan}
+
+Biểu đồ Use Case mô tả các chức năng mà hệ thống cung cấp từ góc nhìn của người dùng. Nó thể hiện mối quan hệ giữa các tác nhân (Actors) và các trường hợp sử dụng (Use Cases).
+
+\section{Actors (Tác nhân)}
+
+\begin{table}[H]
+\centering
+\caption{Danh sách Actors}
+\label{tab:actors}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Actor} & \textbf{Mô tả} \\
+\hline
+Guest & Người dùng chưa đăng nhập. Chỉ có thể thực hiện đăng ký hoặc đăng nhập. \\
+\hline
+User & Người dùng đã đăng nhập. Có thể sử dụng đầy đủ các chức năng của hệ thống. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Danh Sách Use Cases}
+
+\subsection{Authentication Package}
+
+\begin{table}[H]
+\centering
+\caption{Use Cases - Authentication}
+\label{tab:uc-auth}
+\begin{tabular}{|l|l|l|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Use Case} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+UC-01 & Đăng ký & Guest & Tạo tài khoản mới \\
+\hline
+UC-02 & Đăng nhập & Guest & Xác thực vào hệ thống \\
+\hline
+UC-03 & Đăng xuất & User & Thoát khỏi hệ thống \\
+\hline
+UC-04 & Làm mới token & User & Lấy access token mới \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Friend Management Package}
+
+\begin{table}[H]
+\centering
+\caption{Use Cases - Friend Management}
+\label{tab:uc-friend}
+\begin{tabular}{|l|l|l|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Use Case} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+UC-05 & Gửi lời mời kết bạn & User & Gửi yêu cầu kết bạn \\
+\hline
+UC-06 & Chấp nhận lời mời & User & Đồng ý kết bạn \\
+\hline
+UC-07 & Từ chối lời mời & User & Không đồng ý kết bạn \\
+\hline
+UC-08 & Xem danh sách bạn bè & User & Hiển thị bạn bè \\
+\hline
+UC-09 & Xem lời mời kết bạn & User & Hiển thị lời mời \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Messaging Package}
+
+\begin{table}[H]
+\centering
+\caption{Use Cases - Messaging}
+\label{tab:uc-message}
+\begin{tabular}{|l|l|l|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Use Case} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+UC-10 & Gửi tin nhắn trực tiếp & User & Chat 1-1 \\
+\hline
+UC-11 & Gửi tin nhắn nhóm & User & Chat trong group \\
+\hline
+UC-12 & Xem tin nhắn & User & Đọc lịch sử chat \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Conversation Package}
+
+\begin{table}[H]
+\centering
+\caption{Use Cases - Conversation}
+\label{tab:uc-conv}
+\begin{tabular}{|l|l|l|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Use Case} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+UC-13 & Tạo cuộc hội thoại & User & Bắt đầu chat mới \\
+\hline
+UC-14 & Xem danh sách hội thoại & User & Hiển thị conversations \\
+\hline
+UC-15 & Tạo nhóm chat & User & Tạo group mới \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Use Case Relationships}
+
+\begin{table}[H]
+\centering
+\caption{Mối quan hệ giữa các Use Cases}
+\label{tab:uc-rel}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Relationship} & \textbf{Loại} & \textbf{Giải thích} \\
+\hline
+Gửi tin nhắn trực tiếp $\rightarrow$ Tạo cuộc hội thoại & <<include>> & Khi gửi DM, hệ thống tự động tạo conversation nếu chưa có \\
+\hline
+Gửi tin nhắn nhóm $\rightarrow$ Xem danh sách hội thoại & <<include>> & Cần chọn group từ danh sách trước khi gửi \\
+\hline
+Chấp nhận lời mời $\rightarrow$ Xem lời mời kết bạn & <<extend>> & Mở rộng từ việc xem lời mời \\
+\hline
+Từ chối lời mời $\rightarrow$ Xem lời mời kết bạn & <<extend>> & Mở rộng từ việc xem lời mời \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Đặc Tả Use Case Chi Tiết}
+
+\subsection{UC-01: Đăng ký}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả Use Case - Đăng ký}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Use Case ID} & UC-01 \\
+\hline
+\textbf{Tên} & Đăng ký \\
+\hline
+\textbf{Actor} & Guest \\
+\hline
+\textbf{Mô tả} & Người dùng tạo tài khoản mới trong hệ thống \\
+\hline
+\textbf{Tiền điều kiện} & Người dùng chưa có tài khoản \\
+\hline
+\textbf{Hậu điều kiện} & Tài khoản được tạo thành công \\
+\hline
+\textbf{Luồng chính} & 
+1. Guest truy cập trang đăng ký \newline
+2. Guest nhập username, password, email, firstName, lastName \newline
+3. Hệ thống kiểm tra username chưa tồn tại \newline
+4. Hệ thống mã hóa password \newline
+5. Hệ thống tạo user mới \newline
+6. Hệ thống chuyển đến trang đăng nhập \\
+\hline
+\textbf{Luồng phụ} & 
+3a. Username đã tồn tại: Hiển thị lỗi "Username đã tồn tại" \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{UC-02: Đăng nhập}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả Use Case - Đăng nhập}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Use Case ID} & UC-02 \\
+\hline
+\textbf{Tên} & Đăng nhập \\
+\hline
+\textbf{Actor} & Guest \\
+\hline
+\textbf{Mô tả} & Người dùng xác thực vào hệ thống \\
+\hline
+\textbf{Tiền điều kiện} & Người dùng đã có tài khoản \\
+\hline
+\textbf{Hậu điều kiện} & Người dùng được xác thực, nhận access token \\
+\hline
+\textbf{Luồng chính} & 
+1. Guest truy cập trang đăng nhập \newline
+2. Guest nhập username và password \newline
+3. Hệ thống tìm user theo username \newline
+4. Hệ thống so sánh password \newline
+5. Hệ thống tạo access token (JWT) \newline
+6. Hệ thống tạo refresh token \newline
+7. Hệ thống lưu session \newline
+8. Hệ thống trả về access token và cookie \\
+\hline
+\textbf{Luồng phụ} & 
+3a. User không tồn tại: Hiển thị lỗi \newline
+4a. Password không đúng: Hiển thị lỗi \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================
+% CHAPTER 4: BIỂU ĐỒ SEQUENCE
+% ============================================
+\chapter{BIỂU ĐỒ SEQUENCE}
+
+\section{Tổng Quan}
+
+Biểu đồ Sequence (Biểu đồ tuần tự) mô tả sự tương tác giữa các đối tượng theo thứ tự thời gian. Nó thể hiện luồng xử lý của hệ thống từ khi nhận request đến khi trả về response.
+
+\section{Các Thành Phần Trong Biểu Đồ}
+
+\begin{table}[H]
+\centering
+\caption{Các thành phần trong Biểu đồ Sequence}
+\label{tab:seq-components}
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Thành phần} & \textbf{Ký hiệu} & \textbf{Mô tả} \\
+\hline
+User & Actor & Người dùng tương tác với hệ thống \\
+\hline
+Frontend & Participant & Ứng dụng React chạy trên trình duyệt \\
+\hline
+Backend & Participant & Server Express.js xử lý API \\
+\hline
+MongoDB & Database & Cơ sở dữ liệu lưu trữ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Sequence Diagram: Authentication}
+
+\subsection{Đăng Ký (Sign Up)}
+
+\textbf{Mô tả:} Luồng xử lý khi người dùng đăng ký tài khoản mới.
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User nhập thông tin đăng ký (username, password, email, firstName, lastName)
+    \item Frontend gửi request \texttt{POST /api/auth/signup}
+    \item Backend kiểm tra username đã tồn tại chưa trong database
+    \item Nếu chưa tồn tại:
+    \begin{itemize}
+        \item Backend hash password bằng bcrypt (salt = 10)
+        \item Backend tạo user mới trong MongoDB
+        \item Backend trả về \texttt{204 No Content}
+    \end{itemize}
+    \item Nếu đã tồn tại: Backend trả về \texttt{409 Conflict}
+    \item Frontend hiển thị kết quả cho User
+\end{enumerate}
+
+\subsection{Đăng Nhập (Sign In)}
+
+\textbf{Mô tả:} Luồng xử lý khi người dùng đăng nhập.
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User nhập username và password
+    \item Frontend gửi request \texttt{POST /api/auth/signin}
+    \item Backend tìm user theo username trong database
+    \item Backend so sánh password với hash đã lưu (bcrypt.compare)
+    \item Nếu password đúng:
+    \begin{itemize}
+        \item Tạo Access Token (JWT, TTL: 30 phút)
+        \item Tạo Refresh Token (random bytes, TTL: 14 ngày)
+        \item Lưu session vào database
+        \item Trả về access token + Set Cookie (refresh token)
+    \end{itemize}
+    \item Nếu password sai: Trả về \texttt{401 Unauthorized}
+\end{enumerate}
+
+\subsection{Refresh Token}
+
+\textbf{Mô tả:} Luồng xử lý khi access token hết hạn.
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item Frontend gửi request \texttt{POST /api/auth/refresh-token} với cookie chứa refresh token
+    \item Backend tìm session theo refresh token
+    \item Kiểm tra session còn hạn không
+    \item Nếu hợp lệ: Tạo access token mới và trả về
+    \item Nếu không hợp lệ: Trả về \texttt{403 Forbidden}
+\end{enumerate}
+
+\subsection{Đăng Xuất (Sign Out)}
+
+\textbf{Mô tả:} Luồng xử lý khi người dùng đăng xuất.
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User click nút đăng xuất
+    \item Frontend gửi request \texttt{POST /api/auth/signout}
+    \item Backend xóa session khỏi database
+    \item Backend xóa cookie chứa refresh token
+    \item Backend trả về \texttt{204 No Content}
+    \item Frontend xóa access token và chuyển về trang đăng nhập
+\end{enumerate}
+
+\section{Sequence Diagram: Friend Management}
+
+\subsection{Gửi Lời Mời Kết Bạn}
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User A gửi lời mời đến User B
+    \item Frontend gửi \texttt{POST /api/friends/request \{ to, message \}}
+    \item Backend kiểm tra:
+    \begin{itemize}
+        \item Không gửi cho chính mình
+        \item User B tồn tại
+        \item Chưa là bạn bè
+        \item Chưa có lời mời đang chờ
+    \end{itemize}
+    \item Nếu hợp lệ: Tạo FriendRequest và trả về \texttt{201 Created}
+    \item Nếu không hợp lệ: Trả về lỗi tương ứng
+\end{enumerate}
+
+\subsection{Chấp Nhận Lời Mời}
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User B chấp nhận lời mời từ User A
+    \item Frontend gửi \texttt{POST /api/friends/accept/:requestId}
+    \item Backend kiểm tra quyền (chỉ người nhận mới được chấp nhận)
+    \item Backend tạo Friend relationship
+    \item Backend xóa FriendRequest
+    \item Backend trả về thông tin bạn mới
+\end{enumerate}
+
+\section{Sequence Diagram: Messaging}
+
+\subsection{Gửi Tin Nhắn Trực Tiếp}
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User nhập nội dung tin nhắn
+    \item Frontend gửi \texttt{POST /api/messages/direct \{ recipientId, content \}}
+    \item Backend kiểm tra conversation đã tồn tại chưa
+    \item Nếu chưa có: Tạo conversation mới với type = "direct"
+    \item Backend tạo message mới
+    \item Backend cập nhật lastMessage của conversation
+    \item Backend trả về message đã tạo
+\end{enumerate}
+
+\section{Sequence Diagram: Conversation}
+
+\subsection{Lấy Tin Nhắn (Pagination)}
+
+\textbf{Các bước:}
+\begin{enumerate}
+    \item User mở một conversation
+    \item Frontend gửi \texttt{GET /api/conversations/:id/messages?limit=50\&cursor=...}
+    \item Backend query messages với cursor-based pagination
+    \item Backend sắp xếp theo thời gian (mới nhất trước)
+    \item Backend trả về messages + nextCursor cho lần query tiếp theo
+\end{enumerate}
+
+% ============================================
+% CHAPTER 5: BIỂU ĐỒ ACTIVITY
+% ============================================
+\chapter{BIỂU ĐỒ ACTIVITY}
+
+\section{Tổng Quan}
+
+Biểu đồ Activity (Biểu đồ hoạt động) mô tả luồng công việc (workflow) của hệ thống. Nó thể hiện các hoạt động, điều kiện rẽ nhánh, và luồng xử lý song song.
+
+\section{Authentication Flow}
+
+\subsection{Mô tả}
+Biểu đồ này mô tả luồng xác thực khi người dùng mở ứng dụng, bao gồm các trường hợp: đã đăng nhập, token hết hạn, và cần đăng nhập mới.
+
+\subsection{Các bước chính}
+
+\begin{enumerate}
+    \item \textbf{Mở ứng dụng}
+    \item \textbf{Kiểm tra đã đăng nhập?}
+    \begin{itemize}
+        \item \textbf{Có:} Kiểm tra access token
+        \begin{itemize}
+            \item Token hợp lệ $\rightarrow$ Vào trang chính
+            \item Token hết hạn $\rightarrow$ Gọi refresh token
+            \begin{itemize}
+                \item Refresh thành công $\rightarrow$ Vào trang chính
+                \item Refresh thất bại $\rightarrow$ Chuyển đến đăng nhập
+            \end{itemize}
+        \end{itemize}
+        \item \textbf{Không:} Hiển thị trang đăng nhập
+        \begin{itemize}
+            \item Chọn đăng nhập $\rightarrow$ Nhập thông tin $\rightarrow$ Xác thực
+            \item Chọn đăng ký $\rightarrow$ Nhập thông tin $\rightarrow$ Tạo tài khoản
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+\section{Send Message Flow}
+
+\subsection{Mô tả}
+Biểu đồ này mô tả luồng gửi tin nhắn, bao gồm validation, xử lý song song (UI và server), và xử lý lỗi.
+
+\subsection{Các bước chính}
+
+\begin{enumerate}
+    \item Mở cuộc hội thoại
+    \item Nhập nội dung tin nhắn
+    \item Kiểm tra nội dung rỗng?
+    \begin{itemize}
+        \item Có $\rightarrow$ Hiển thị cảnh báo $\rightarrow$ Kết thúc
+        \item Không $\rightarrow$ Tiếp tục
+    \end{itemize}
+    \item Gửi tin nhắn đến server
+    \item \textbf{Xử lý song song (Fork):}
+    \begin{itemize}
+        \item Nhánh 1: Hiển thị tin nhắn trạng thái "pending" trên UI
+        \item Nhánh 2: Server xử lý, lưu database, cập nhật conversation
+    \end{itemize}
+    \item \textbf{Đồng bộ (Join):} Kiểm tra kết quả
+    \begin{itemize}
+        \item Thành công $\rightarrow$ Cập nhật trạng thái "sent"
+        \item Thất bại $\rightarrow$ Hiển thị lỗi, cho phép gửi lại
+    \end{itemize}
+\end{enumerate}
+
+\section{Friend Request Flow}
+
+\subsection{Mô tả}
+Biểu đồ này sử dụng Swimlane để mô tả luồng gửi và xử lý lời mời kết bạn giữa User A, Server, và User B.
+
+\subsection{Swimlanes}
+
+\begin{table}[H]
+\centering
+\caption{Swimlanes trong Friend Request Flow}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Lane} & \textbf{Hoạt động} \\
+\hline
+User A & Tìm kiếm người dùng, chọn User B, gửi lời mời, nhận thông báo kết quả \\
+\hline
+Server & Nhận yêu cầu, kiểm tra điều kiện, tạo FriendRequest, thông báo User B, xử lý chấp nhận/từ chối \\
+\hline
+User B & Nhận thông báo, chọn chấp nhận hoặc từ chối, cập nhật danh sách bạn bè \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Các bước chính}
+
+\begin{enumerate}
+    \item \textbf{User A:} Tìm kiếm và chọn User B
+    \item \textbf{User A:} Gửi lời mời kết bạn
+    \item \textbf{Server:} Nhận và kiểm tra yêu cầu
+    \begin{itemize}
+        \item Đã là bạn bè? $\rightarrow$ Trả về lỗi
+        \item Đã có lời mời? $\rightarrow$ Trả về lỗi
+    \end{itemize}
+    \item \textbf{Server:} Tạo FriendRequest và thông báo User B
+    \item \textbf{User B:} Nhận thông báo và chọn hành động
+    \begin{itemize}
+        \item \textbf{Chấp nhận:} Server tạo Friend relationship, xóa request
+        \item \textbf{Từ chối:} Server xóa request
+    \end{itemize}
+    \item \textbf{User A:} Nhận thông báo kết quả
+\end{enumerate}
+
+% ============================================
+% CHAPTER 6: BIỂU ĐỒ CLASS
+% ============================================
+\chapter{BIỂU ĐỒ CLASS}
+
+\section{Tổng Quan}
+
+Biểu đồ Class mô tả cấu trúc tĩnh của hệ thống, bao gồm các lớp (classes), thuộc tính (attributes), phương thức (methods), và mối quan hệ giữa chúng.
+
+\section{Models (Mô hình dữ liệu)}
+
+\subsection{User}
+
+\begin{table}[H]
+\centering
+\caption{Class User - Thông tin người dùng}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất (MongoDB) \\
+\hline
+username & String & Tên đăng nhập (unique) \\
+\hline
+hashedPassword & String & Mật khẩu đã mã hóa \\
+\hline
+email & String & Địa chỉ email \\
+\hline
+displayName & String & Tên hiển thị \\
+\hline
+avatarUrl & String & URL ảnh đại diện \\
+\hline
+createdAt & Date & Thời gian tạo \\
+\hline
+updatedAt & Date & Thời gian cập nhật \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Session}
+
+\begin{table}[H]
+\centering
+\caption{Class Session - Phiên đăng nhập}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất \\
+\hline
+userId & ObjectId & Tham chiếu đến User \\
+\hline
+refreshToken & String & Token làm mới \\
+\hline
+expiresAt & Date & Thời gian hết hạn \\
+\hline
+createdAt & Date & Thời gian tạo \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Friend}
+
+\begin{table}[H]
+\centering
+\caption{Class Friend - Quan hệ bạn bè}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất \\
+\hline
+userA & ObjectId & User thứ nhất \\
+\hline
+userB & ObjectId & User thứ hai \\
+\hline
+createdAt & Date & Thời gian kết bạn \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{FriendRequest}
+
+\begin{table}[H]
+\centering
+\caption{Class FriendRequest - Lời mời kết bạn}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất \\
+\hline
+from & ObjectId & Người gửi \\
+\hline
+to & ObjectId & Người nhận \\
+\hline
+message & String & Lời nhắn kèm theo \\
+\hline
+createdAt & Date & Thời gian gửi \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Conversation}
+
+\begin{table}[H]
+\centering
+\caption{Class Conversation - Cuộc hội thoại}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất \\
+\hline
+type & String & Loại: "direct" hoặc "group" \\
+\hline
+participants & Array & Danh sách thành viên \\
+\hline
+group & Object & Thông tin nhóm (nếu có) \\
+\hline
+lastMessage & Object & Tin nhắn cuối cùng \\
+\hline
+lastMessageAt & Date & Thời gian tin nhắn cuối \\
+\hline
+seenBy & Array & Danh sách đã xem \\
+\hline
+unreadCounts & Map & Số tin chưa đọc theo user \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Message}
+
+\begin{table}[H]
+\centering
+\caption{Class Message - Tin nhắn}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Mô tả} \\
+\hline
+\_id & ObjectId & ID duy nhất \\
+\hline
+conversationId & ObjectId & Tham chiếu đến Conversation \\
+\hline
+senderId & ObjectId & Người gửi \\
+\hline
+content & String & Nội dung tin nhắn \\
+\hline
+createdAt & Date & Thời gian gửi \\
+\hline
+updatedAt & Date & Thời gian cập nhật \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Controllers}
+
+\begin{table}[H]
+\centering
+\caption{Danh sách Controllers và Methods}
+\begin{tabular}{|l|l|p{5cm}|}
+\hline
+\textbf{Controller} & \textbf{Method} & \textbf{Chức năng} \\
+\hline
+\multirow{4}{*}{AuthController} & signUp() & Đăng ký tài khoản \\
+& signIn() & Đăng nhập \\
+& signOut() & Đăng xuất \\
+& refreshToken() & Làm mới token \\
+\hline
+UserController & authMe() & Lấy thông tin user hiện tại \\
+\hline
+\multirow{5}{*}{FriendController} & sendFriendRequest() & Gửi lời mời \\
+& acceptFriendRequest() & Chấp nhận lời mời \\
+& declineFriendRequest() & Từ chối lời mời \\
+& getAllFriends() & Lấy danh sách bạn bè \\
+& getFriendRequests() & Lấy lời mời \\
+\hline
+\multirow{2}{*}{MessageController} & sendDirectMessage() & Gửi tin nhắn 1-1 \\
+& sendGroupMessage() & Gửi tin nhắn nhóm \\
+\hline
+\multirow{3}{*}{ConversationController} & createConversation() & Tạo hội thoại \\
+& getConversations() & Lấy danh sách \\
+& getMessages() & Lấy tin nhắn \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Middleware}
+
+\begin{table}[H]
+\centering
+\caption{Middleware}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Middleware} & \textbf{Method} & \textbf{Chức năng} \\
+\hline
+AuthMiddleware & protectedRoute() & Xác thực JWT token, gắn user vào request \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Quan Hệ Giữa Các Class}
+
+\begin{table}[H]
+\centering
+\caption{Quan hệ giữa các Models}
+\begin{tabular}{|l|l|l|p{4cm}|}
+\hline
+\textbf{Class A} & \textbf{Quan hệ} & \textbf{Class B} & \textbf{Mô tả} \\
+\hline
+User & 1:N & Session & User có nhiều sessions \\
+\hline
+User & N:M & Friend & User có nhiều bạn bè \\
+\hline
+User & 1:N & FriendRequest & User gửi/nhận nhiều lời mời \\
+\hline
+User & N:M & Conversation & User tham gia nhiều hội thoại \\
+\hline
+User & 1:N & Message & User gửi nhiều tin nhắn \\
+\hline
+Conversation & 1:N & Message & Hội thoại chứa nhiều tin nhắn \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================
+% CHAPTER 7: THIẾT KẾ API
+% ============================================
+\chapter{THIẾT KẾ API}
+
+\section{Tổng Quan}
+
+API được thiết kế theo chuẩn RESTful, sử dụng JSON làm định dạng dữ liệu trao đổi.
+
+\section{Base URL}
+
+\begin{lstlisting}
+http://localhost:5001/api
+\end{lstlisting}
+
+\section{Authentication APIs}
+
+\begin{table}[H]
+\centering
+\caption{Authentication APIs}
+\begin{tabular}{|l|l|p{4cm}|l|}
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mô tả} & \textbf{Auth} \\
+\hline
+POST & /auth/signup & Đăng ký & Không \\
+\hline
+POST & /auth/signin & Đăng nhập & Không \\
+\hline
+POST & /auth/signout & Đăng xuất & Có \\
+\hline
+POST & /auth/refresh-token & Làm mới token & Cookie \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{POST /auth/signup}
+
+\textbf{Request Body:}
+\begin{lstlisting}[language=json]
+{
+  "username": "string",
+  "password": "string",
+  "email": "string",
+  "firstName": "string",
+  "lastName": "string"
+}
+\end{lstlisting}
+
+\textbf{Response:}
+\begin{itemize}
+    \item \texttt{204 No Content} - Thành công
+    \item \texttt{400 Bad Request} - Thiếu thông tin
+    \item \texttt{409 Conflict} - Username đã tồn tại
+\end{itemize}
+
+\subsection{POST /auth/signin}
+
+\textbf{Request Body:}
+\begin{lstlisting}[language=json]
+{
+  "username": "string",
+  "password": "string"
+}
+\end{lstlisting}
+
+\textbf{Response:}
+\begin{lstlisting}[language=json]
+{
+  "message": "User [displayName] da logged in!",
+  "accessToken": "jwt_token_here"
+}
+\end{lstlisting}
+
+\section{Friend APIs}
+
+\begin{table}[H]
+\centering
+\caption{Friend APIs}
+\begin{tabular}{|l|l|p{4cm}|l|}
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mô tả} & \textbf{Auth} \\
+\hline
+POST & /friends/request & Gửi lời mời & Có \\
+\hline
+POST & /friends/accept/:id & Chấp nhận & Có \\
+\hline
+POST & /friends/decline/:id & Từ chối & Có \\
+\hline
+GET & /friends & Danh sách bạn bè & Có \\
+\hline
+GET & /friends/requests & Danh sách lời mời & Có \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Message APIs}
+
+\begin{table}[H]
+\centering
+\caption{Message APIs}
+\begin{tabular}{|l|l|p{4cm}|l|}
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mô tả} & \textbf{Auth} \\
+\hline
+POST & /messages/direct & Gửi tin nhắn 1-1 & Có \\
+\hline
+POST & /messages/group & Gửi tin nhắn nhóm & Có \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Conversation APIs}
+
+\begin{table}[H]
+\centering
+\caption{Conversation APIs}
+\begin{tabular}{|l|l|p{4cm}|l|}
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mô tả} & \textbf{Auth} \\
+\hline
+POST & /conversations & Tạo hội thoại & Có \\
+\hline
+GET & /conversations & Danh sách hội thoại & Có \\
+\hline
+GET & /conversations/:id/messages & Lấy tin nhắn & Có \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================
+% CHAPTER 8: KẾT LUẬN
+% ============================================
+\chapter{KẾT LUẬN}
+
+\section{Tổng Kết}
+
+Báo cáo đã trình bày chi tiết việc phân tích và thiết kế hệ thống cho ứng dụng \textbf{Moji Realtime Chat Application}, bao gồm:
+
+\begin{enumerate}
+    \item \textbf{Phân tích yêu cầu:} Xác định 15 yêu cầu chức năng và 5 yêu cầu phi chức năng
+    \item \textbf{Biểu đồ Use Case:} Mô tả 15 use cases với 2 actors
+    \item \textbf{Biểu đồ Sequence:} 4 biểu đồ chính (Authentication, Friend, Messaging, Conversation)
+    \item \textbf{Biểu đồ Activity:} 3 biểu đồ (Authentication Flow, Send Message Flow, Friend Request Flow)
+    \item \textbf{Biểu đồ Class:} 6 models, 5 controllers, 1 middleware
+    \item \textbf{Thiết kế API:} RESTful API với 13 endpoints
+\end{enumerate}
+
+\section{Danh Sách Biểu Đồ}
+
+\begin{table}[H]
+\centering
+\caption{Tổng hợp các biểu đồ}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\textbf{\#} & \textbf{Loại} & \textbf{Tên} & \textbf{File} \\
+\hline
+1 & Use Case & Use Case Diagram & diagrams.puml \\
+\hline
+2 & Activity & Authentication Flow & diagrams.puml \\
+\hline
+3 & Activity & Send Message Flow & diagrams.puml \\
+\hline
+4 & Activity & Friend Request Flow & diagrams.puml \\
+\hline
+5 & Class & Class Diagram & diagrams.puml \\
+\hline
+6 & Sequence & Authentication & sequence.puml \\
+\hline
+7 & Sequence & Friend Management & sequence.puml \\
+\hline
+8 & Sequence & Messaging & sequence.puml \\
+\hline
+9 & Sequence & Conversation & sequence.puml \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Hướng Phát Triển}
+
+Trong tương lai, dự án có thể mở rộng thêm các tính năng:
+
+\begin{itemize}
+    \item \textbf{Realtime với WebSocket/Socket.io} - Nhận tin nhắn tức thì
+    \item \textbf{Push Notification} - Thông báo đẩy
+    \item \textbf{Media Sharing} - Chia sẻ hình ảnh, file
+    \item \textbf{Voice/Video Call} - Gọi điện, video call
+    \item \textbf{End-to-End Encryption} - Mã hóa đầu cuối
+    \item \textbf{Message Reactions} - React tin nhắn
+    \item \textbf{Typing Indicators} - Hiển thị đang gõ
+    \item \textbf{Read Receipts} - Trạng thái đã xem
+\end{itemize}
+
+% ============================================
+% APPENDIX
+% ============================================
+\appendix
+\chapter{PHỤ LỤC}
+
+\section{Cấu Trúc Thư Mục}
+
+\begin{lstlisting}
+Moji_RealtimeChatApp/
+|-- backend/
+|   |-- package.json
+|   |-- src/
+|       |-- server.js
+|       |-- controllers/
+|       |   |-- authController.js
+|       |   |-- conversationController.js
+|       |   |-- friendController.js
+|       |   |-- messageController.js
+|       |   |-- userController.js
+|       |-- libs/
+|       |   |-- db.js
+|       |-- middlewares/
+|       |   |-- authMiddleware.js
+|       |-- models/
+|       |   |-- Conversation.js
+|       |   |-- Friend.js
+|       |   |-- FriendRequest.js
+|       |   |-- Message.js
+|       |   |-- Session.js
+|       |   |-- User.js
+|       |-- routes/
+|       |   |-- authRoute.js
+|       |   |-- conversationRoute.js
+|       |   |-- friendRoute.js
+|       |   |-- messageRoute.js
+|       |   |-- userRoute.js
+|-- frontend/
+|   |-- package.json
+|   |-- src/
+|       |-- App.tsx
+|       |-- components/
+|       |-- pages/
+|       |-- services/
+|       |-- stores/
+|-- docs/
+    |-- diagrams.puml
+    |-- sequence.puml
+    |-- README.md
+    |-- report.tex
+\end{lstlisting}
+
+\section{Hướng Dẫn Xem Biểu Đồ PlantUML}
+
+\begin{enumerate}
+    \item \textbf{VS Code:} Cài extension "PlantUML" và mở file \texttt{.puml}
+    \item \textbf{Online:} Truy cập \url{https://www.plantuml.com/plantuml}
+    \item \textbf{CLI:} Chạy lệnh \texttt{plantuml diagrams.puml}
+\end{enumerate}
+
+\section{Hướng Dẫn Chạy Dự Án}
+
+\subsection{Backend}
+\begin{lstlisting}[language=bash]
+cd backend
+npm install
+npm run dev
+\end{lstlisting}
+
+\subsection{Frontend}
+\begin{lstlisting}[language=bash]
+cd frontend
+npm install
+npm run dev
+\end{lstlisting}
+
+% ============================================
+% REFERENCES
+% ============================================
+\begin{thebibliography}{9}
+
+\bibitem{react}
+React Documentation,
+\url{https://react.dev/}
+
+\bibitem{express}
+Express.js Documentation,
+\url{https://expressjs.com/}
+
+\bibitem{mongodb}
+MongoDB Documentation,
+\url{https://docs.mongodb.com/}
+
+\bibitem{jwt}
+JSON Web Token (JWT),
+\url{https://jwt.io/}
+
+\bibitem{plantuml}
+PlantUML Documentation,
+\url{https://plantuml.com/}
+
+\end{thebibliography}
+
+\end{document}
